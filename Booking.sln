@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35806.99 d17.13
+VisualStudioVersion = 17.13.35806.99
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Domain", "src\Booking.Domain\Booking.Domain.csproj", "{2B4A59D0-007B-4E0D-A217-A624DDD1E8A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Application", "src\Booking.Application\Booking.Application.csproj", "{B9BDC19E-7CCF-4F2C-802F-D27FE85AD7D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Infrastructure", "src\Booking.Infrastructure\Booking.Infrastructure.csproj", "{C92137EA-D692-4AA4-8731-88D579817027}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,12 +21,22 @@ Global
 		{2B4A59D0-007B-4E0D-A217-A624DDD1E8A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B4A59D0-007B-4E0D-A217-A624DDD1E8A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B4A59D0-007B-4E0D-A217-A624DDD1E8A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9BDC19E-7CCF-4F2C-802F-D27FE85AD7D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9BDC19E-7CCF-4F2C-802F-D27FE85AD7D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9BDC19E-7CCF-4F2C-802F-D27FE85AD7D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9BDC19E-7CCF-4F2C-802F-D27FE85AD7D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C92137EA-D692-4AA4-8731-88D579817027}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C92137EA-D692-4AA4-8731-88D579817027}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C92137EA-D692-4AA4-8731-88D579817027}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C92137EA-D692-4AA4-8731-88D579817027}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2B4A59D0-007B-4E0D-A217-A624DDD1E8A5} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{B9BDC19E-7CCF-4F2C-802F-D27FE85AD7D7} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{C92137EA-D692-4AA4-8731-88D579817027} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D76D6951-F50D-42A1-80EA-3E5D1D56D772}
