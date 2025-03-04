@@ -10,11 +10,8 @@ namespace Booking.Domain.Users
         Email email) : BaseEntity(id)
     {
         public FirstName FirstName { get; private set; } = firstName;
-
         public LastName LastName { get; private set; } = lastName;
-
         public Email Email { get; private set; } = email;
-
 
         public static User Create(FirstName firstName, LastName lastName, Email email)
         {

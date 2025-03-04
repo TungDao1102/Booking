@@ -18,29 +18,17 @@ namespace Booking.Domain.Bookings
         DateTime createdOn) : BaseEntity(bookingId)
     {
         public Guid ApartmentId { get; private set; } = apartmentId;
-
         public Guid UserId { get; private set; } = userId;
-
         public DateRange Duration { get; private set; } = duration;
-
         public Money PriceForPeriod { get; private set; } = priceForPeriod;
-
         public Money CleaningFee { get; private set; } = cleaningFee;
-
         public Money AmenitiesUpCharge { get; private set; } = amenitiesUpCharge;
-
         public Money TotalPrice { get; private set; } = totalPrice;
-
         public BookingStatus Status { get; private set; } = status;
-
         public DateTime CreatedOn { get; private set; } = createdOn;
-
         public DateTime? ConfirmedOn { get; private set; }
-
         public DateTime? RejectedOn { get; private set; }
-
         public DateTime? CompletedOn { get; private set; }
-
         public DateTime? CancelledOn { get; private set; }
 
         public static Booking Reserve(Apartment apartment, Guid userId, DateRange duration, DateTime dateTime, PricingService pricingService)
