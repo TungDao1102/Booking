@@ -1,7 +1,7 @@
 ﻿using Booking.Domain.Abstractions;
 using MediatR;
 
-namespace Booking.Infrastructure.Events
+namespace Booking.Application.Events
 {
     public class DomainEventAdapter<T>(T domainEvent) : INotification where T : IDomainEvent
     {
