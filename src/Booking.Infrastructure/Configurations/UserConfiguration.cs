@@ -1,6 +1,6 @@
 ﻿using Booking.Domain.Users;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Booking.Infrastructure.Configurations
 {
@@ -25,6 +25,7 @@ namespace Booking.Infrastructure.Configurations
                 .HasConversion(email => email.Value, value => new Domain.Users.Email(value));
 
             builder.HasIndex(user => user.Email).IsUnique();
+            builder.HasIndex(user => user.IdentityId).IsUnique();
         }
     }
 }

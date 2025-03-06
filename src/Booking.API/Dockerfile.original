@@ -13,9 +13,6 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/Booking.API/Booking.API.csproj", "src/Booking.API/"]
-COPY ["src/Booking.Infrastructure/Booking.Infrastructure.csproj", "src/Booking.Infrastructure/"]
-COPY ["src/Booking.Application/Booking.Application.csproj", "src/Booking.Application/"]
-COPY ["src/Booking.Domain/Booking.Domain.csproj", "src/Booking.Domain/"]
 RUN dotnet restore "./src/Booking.API/Booking.API.csproj"
 COPY . .
 WORKDIR "/src/src/Booking.API"

@@ -1,16 +1,20 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
+﻿using Booking.Application.Abstractions.Authentications;
 using Booking.Application.Abstractions.Clocks;
-using Booking.Infrastructure.Clocks;
-using Booking.Application.Abstractions.Email;
-using Booking.Infrastructure.Email;
-using Booking.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using Booking.Application.Abstractions.Repositories;
-using Booking.Infrastructure.Repositories;
 using Booking.Application.Abstractions.Data;
-using Dapper;
+using Booking.Application.Abstractions.Email;
+using Booking.Application.Abstractions.Repositories;
+using Booking.Infrastructure.Authentications;
+using Booking.Infrastructure.Clocks;
 using Booking.Infrastructure.Converters;
+using Booking.Infrastructure.Data;
+using Booking.Infrastructure.Email;
+using Booking.Infrastructure.Repositories;
+using Dapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Booking.Infrastructure
 {
@@ -21,6 +25,14 @@ namespace Booking.Infrastructure
             services.AddTransient<IDateTimeProvider, DateTimeProvider>();
             services.AddTransient<IEmailService, EmailService>();
 
+            AddPersistence(services, configuration);
+            AddAuthentication(services, configuration);
+
+            return services;
+        }
+
+        private static void AddPersistence(IServiceCollection services, IConfiguration configuration)
+        {
             var connectionString = configuration.GetConnectionString("Database") ?? throw new ArgumentNullException(nameof(configuration));
 
             services.AddDbContext<AppDbContext>(options =>
@@ -35,8 +47,23 @@ namespace Booking.Infrastructure
 
             services.AddSingleton<ISqlConnectionFactory>(_ => new SqlConnectionFactory(connectionString));
             SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
+        }
 
-            return services;
+        private static void AddAuthentication(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+            services.Configure<AuthenticationOption>(configuration.GetSection("Authentication"));
+
+            services.ConfigureOptions<JwtBearerOptionsSetup>();
+            services.Configure<KeycloakOptions>(configuration.GetSection("Keycloak"));
+            services.AddTransient<AdminAuthorizationDelegatingHandler>();
+
+            services.AddHttpClient<IAuthService, AuthService>((serviceProvider, httpClient) =>
+            {
+                var keyCloakOptions = serviceProvider.GetRequiredService<IOptions<KeycloakOptions>>().Value;
+                httpClient.BaseAddress = new Uri(keyCloakOptions.AdminUrl);
+            }).AddHttpMessageHandler<AdminAuthorizationDelegatingHandler>();
+
         }
     }
 }
