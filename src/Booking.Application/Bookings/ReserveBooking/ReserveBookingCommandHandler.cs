@@ -1,6 +1,7 @@
 ﻿using Booking.Application.Abstractions.Clocks;
 using Booking.Application.Abstractions.Messaging;
 using Booking.Application.Abstractions.Repositories;
+using Booking.Application.Exceptions;
 using Booking.Domain.Apartments;
 using Booking.Domain.Bookings;
 using Booking.Domain.Commons;
@@ -36,12 +37,22 @@ namespace Booking.Application.Bookings.ReserveBooking
             {
                 return Result.Failure<Guid>(BookingErrors.Overlap);
             }
+            try
+            {
+                var booking = Domain.Bookings.Booking.Reserve(apartment,
+                                            request.UserId,
+                                            duration,
+                                            dateTimeProvider.UtcNow,
+                                            pricingService);
+                bookingRepository.Add(booking);
 
-            var booking = Domain.Bookings.Booking.Reserve(apartment, request.UserId, duration, dateTimeProvider.UtcNow, pricingService);
-            bookingRepository.Add(booking);
-
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-            return booking.Id;
+                await unitOfWork.SaveChangesAsync(cancellationToken);
+                return booking.Id;
+            }
+            catch (ConcurrencyException)
+            {
+                return Result.Failure<Guid>(BookingErrors.Overlap);
+            }
         }
     }
 }
