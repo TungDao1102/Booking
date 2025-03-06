@@ -5,27 +5,34 @@ using Booking.Domain.Commons;
 
 namespace Booking.Domain.Bookings
 {
-    public sealed class Booking(
-        Guid bookingId,
-        Guid apartmentId,
-        Guid userId,
-        DateRange duration,
-        Money priceForPeriod,
-        Money cleaningFee,
-        Money amenitiesUpCharge,
-        Money totalPrice,
-        BookingStatus status,
-        DateTime createdOn) : BaseEntity(bookingId)
+    public sealed class Booking : BaseEntity
     {
-        public Guid ApartmentId { get; private set; } = apartmentId;
-        public Guid UserId { get; private set; } = userId;
-        public DateRange Duration { get; private set; } = duration;
-        public Money PriceForPeriod { get; private set; } = priceForPeriod;
-        public Money CleaningFee { get; private set; } = cleaningFee;
-        public Money AmenitiesUpCharge { get; private set; } = amenitiesUpCharge;
-        public Money TotalPrice { get; private set; } = totalPrice;
-        public BookingStatus Status { get; private set; } = status;
-        public DateTime CreatedOn { get; private set; } = createdOn;
+        private Booking()
+        {
+        }
+        private Booking(Guid id, Guid apartmentId, Guid userId, DateRange duration, Money priceForPeriod, Money cleaningFee, Money amenitiesUpCharge, Money totalPrice, BookingStatus status, DateTime createdOn)
+        : base(id)
+        {
+            ApartmentId = apartmentId;
+            UserId = userId;
+            Duration = duration;
+            PriceForPeriod = priceForPeriod;
+            CleaningFee = cleaningFee;
+            AmenitiesUpCharge = amenitiesUpCharge;
+            TotalPrice = totalPrice;
+            Status = status;
+            CreatedOn = createdOn;
+        }
+
+        public Guid ApartmentId { get; private set; }
+        public Guid UserId { get; private set; }
+        public DateRange Duration { get; private set; } = default!;
+        public Money PriceForPeriod { get; private set; } = default!;
+        public Money CleaningFee { get; private set; } = default!;
+        public Money AmenitiesUpCharge { get; private set; } = default!;
+        public Money TotalPrice { get; private set; } = default!;
+        public BookingStatus Status { get; private set; }
+        public DateTime CreatedOn { get; private set; }
         public DateTime? ConfirmedOn { get; private set; }
         public DateTime? RejectedOn { get; private set; }
         public DateTime? CompletedOn { get; private set; }

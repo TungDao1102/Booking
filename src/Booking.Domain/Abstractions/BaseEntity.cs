@@ -1,9 +1,17 @@
 ﻿namespace Booking.Domain.Abstractions
 {
-    public abstract class BaseEntity(Guid id)
+    public abstract class BaseEntity
     {
         private readonly List<IDomainEvent> _domainEvents = [];
-        public Guid Id { get; init; } = id;
+        public Guid Id { get; init; }
+        protected BaseEntity()
+        {
+        }
+
+        protected BaseEntity(Guid id)
+        {
+            Id = id;
+        }
 
         public IReadOnlyList<IDomainEvent> GetDomainEvents()
         {

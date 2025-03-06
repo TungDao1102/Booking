@@ -3,15 +3,21 @@ using Booking.Domain.Users.Events;
 
 namespace Booking.Domain.Users
 {
-    public sealed class User(
-        Guid id,
-        FirstName firstName,
-        LastName lastName,
-        Email email) : BaseEntity(id)
+    public sealed class User : BaseEntity
     {
-        public FirstName FirstName { get; private set; } = firstName;
-        public LastName LastName { get; private set; } = lastName;
-        public Email Email { get; private set; } = email;
+        private User()
+        {
+
+        }
+        private User(Guid id, FirstName firstName, LastName lastName, Email email) : base(id)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
+        }
+        public FirstName FirstName { get; private set; } = default!;
+        public LastName LastName { get; private set; } = default!;
+        public Email Email { get; private set; } = default!;
 
         public static User Create(FirstName firstName, LastName lastName, Email email)
         {
