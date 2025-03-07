@@ -1,4 +1,5 @@
-﻿using Booking.Application.Users.RegisterUser;
+﻿using Booking.Application.Users.LoginUser;
+using Booking.Application.Users.RegisterUser;
 using Booking.Domain.Commons;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -12,8 +13,7 @@ namespace Booking.API.Controllers.Users
     {
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterUserRequest request,
-        CancellationToken cancellationToken)
+        public async Task<IActionResult> Register(RegisterUserRequest request, CancellationToken cancellationToken)
         {
             var command = new RegisterUserCommand(
             request.Email,
@@ -23,12 +23,17 @@ namespace Booking.API.Controllers.Users
 
             Result<Guid> result = await sender.Send(command, cancellationToken);
 
-            if (result.IsFailure)
-            {
-                return BadRequest(result.Error);
-            }
+            return result.IsFailure ? BadRequest(result.Error) : Ok(result.Value);
+        }
 
-            return Ok(result.Value);
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<IActionResult> LogIn(LoginUserRequest request, CancellationToken cancellationToken)
+        {
+            var command = new LoginUserCommand(request.Email, request.Password);
+            Result<AccessTokenResponse> result = await sender.Send(command, cancellationToken);
+
+            return result.IsFailure ? Unauthorized(result.Error) : Ok(result.Value);
         }
     }
 }

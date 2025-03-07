@@ -64,6 +64,11 @@ namespace Booking.Infrastructure
                 httpClient.BaseAddress = new Uri(keyCloakOptions.AdminUrl);
             }).AddHttpMessageHandler<AdminAuthorizationDelegatingHandler>();
 
+            services.AddHttpClient<IJwtService, JwtService>((serviceProvider, httpClient) =>
+            {
+                var keyCloakOptions = serviceProvider.GetRequiredService<IOptions<KeycloakOptions>>().Value;
+                httpClient.BaseAddress = new Uri(keyCloakOptions.TokenUrl);
+            });
         }
     }
 }
