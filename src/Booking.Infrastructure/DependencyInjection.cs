@@ -4,12 +4,14 @@ using Booking.Application.Abstractions.Data;
 using Booking.Application.Abstractions.Email;
 using Booking.Application.Abstractions.Repositories;
 using Booking.Infrastructure.Authentications;
+using Booking.Infrastructure.Authorizations;
 using Booking.Infrastructure.Clocks;
 using Booking.Infrastructure.Converters;
 using Booking.Infrastructure.Data;
 using Booking.Infrastructure.Email;
 using Booking.Infrastructure.Repositories;
 using Dapper;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +29,7 @@ namespace Booking.Infrastructure
 
             AddPersistence(services, configuration);
             AddAuthentication(services, configuration);
+            AddAuthorization(services);
 
             return services;
         }
@@ -69,6 +72,12 @@ namespace Booking.Infrastructure
                 var keyCloakOptions = serviceProvider.GetRequiredService<IOptions<KeycloakOptions>>().Value;
                 httpClient.BaseAddress = new Uri(keyCloakOptions.TokenUrl);
             });
+        }
+
+        private static void AddAuthorization(IServiceCollection services)
+        {
+            services.AddScoped<AuthorizationService>();
+            services.AddTransient<IClaimsTransformation, CustomClaimsTransformation>();
         }
     }
 }

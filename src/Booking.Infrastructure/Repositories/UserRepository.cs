@@ -6,5 +6,13 @@ namespace Booking.Infrastructure.Repositories
 {
     internal class UserRepository(AppDbContext context) : Repository<User>(context), IUserRepository
     {
+        public override void Add(User user)
+        {
+            foreach (var role in user.Roles)
+            {
+                DbContext.Attach(role);
+            }
+            DbContext.Add(user);
+        }
     }
 }

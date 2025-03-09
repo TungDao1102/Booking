@@ -6,15 +6,15 @@ namespace Booking.Infrastructure.Repositories
 {
     internal abstract class Repository<T>(AppDbContext context) where T : BaseEntity
     {
-        protected readonly DbSet<T> _dbSet = context.Set<T>();
+        protected readonly AppDbContext DbContext = context;
         public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return await _dbSet.FirstOrDefaultAsync(user => user.Id == id, cancellationToken);
+            return await DbContext.Set<T>().FirstOrDefaultAsync(user => user.Id == id, cancellationToken);
         }
 
         public virtual void Add(T entity)
         {
-            _dbSet.Add(entity);
+            DbContext.Set<T>().Add(entity);
         }
     }
 }
