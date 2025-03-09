@@ -1,4 +1,5 @@
-﻿using Booking.Application.Abstractions.Data;
+﻿using Booking.Application.Abstractions.Authentications;
+using Booking.Application.Abstractions.Data;
 using Booking.Application.Abstractions.Messaging;
 using Booking.Domain.Bookings;
 using Booking.Domain.Commons;
@@ -6,7 +7,9 @@ using Dapper;
 
 namespace Booking.Application.Bookings.GetBooking
 {
-    public class GetBookingQueryHandler(ISqlConnectionFactory sqlConnection) : IQueryHandler<GetBookingQuery, BookingResponse>
+    public class GetBookingQueryHandler(
+        ISqlConnectionFactory sqlConnection,
+        IUserContext userContext) : IQueryHandler<GetBookingQuery, BookingResponse>
     {
         const string sql = """
             SELECT
@@ -36,7 +39,7 @@ namespace Booking.Application.Bookings.GetBooking
             var booking = await connection.QuerySingleOrDefaultAsync<BookingResponse>(
                sql, new { request.BookingId });
 
-            if (booking is null)
+            if (booking is null || userContext.UserId != booking.UserId)
             {
                 return Result.Failure<BookingResponse>(BookingErrors.NotFound);
             }

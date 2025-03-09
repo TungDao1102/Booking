@@ -1,4 +1,4 @@
-﻿using Booking.Domain.Users;
+﻿using Booking.Domain.Users.Authorizations;
 
 namespace Booking.Infrastructure.Authorizations
 {

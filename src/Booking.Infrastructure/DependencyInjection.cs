@@ -13,6 +13,7 @@ using Booking.Infrastructure.Repositories;
 using Dapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -72,12 +73,19 @@ namespace Booking.Infrastructure
                 var keyCloakOptions = serviceProvider.GetRequiredService<IOptions<KeycloakOptions>>().Value;
                 httpClient.BaseAddress = new Uri(keyCloakOptions.TokenUrl);
             });
+
+            services.AddHttpContextAccessor();
+
+            services.AddScoped<IUserContext, UserContext>();
         }
 
         private static void AddAuthorization(IServiceCollection services)
         {
             services.AddScoped<AuthorizationService>();
             services.AddTransient<IClaimsTransformation, CustomClaimsTransformation>();
+            services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
+            services.AddTransient<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
         }
     }
 }

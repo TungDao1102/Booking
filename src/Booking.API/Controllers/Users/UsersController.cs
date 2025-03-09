@@ -1,6 +1,8 @@
-﻿using Booking.Application.Users.LoginUser;
+﻿using Booking.API.Commons;
+using Booking.Application.Users.LoginUser;
 using Booking.Application.Users.RegisterUser;
 using Booking.Domain.Commons;
+using Booking.Infrastructure.Authorizations;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -37,11 +39,12 @@ namespace Booking.API.Controllers.Users
         }
 
         [HttpGet("me")]
+        [HasPermission(Permissions.UserRead)]
         public async Task<IActionResult> GetLoggedInUser(CancellationToken cancellationToken)
         {
             var query = new GetLoggedInUserQuery();
 
-            Result<UserResponse> result = await _sender.Send(query, cancellationToken);
+            Result<UserResponse> result = await sender.Send(query, cancellationToken);
 
             return Ok(result.Value);
         }

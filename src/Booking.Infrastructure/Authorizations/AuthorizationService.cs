@@ -15,5 +15,15 @@ namespace Booking.Infrastructure.Authorizations
                     Roles = x.Roles.ToList()
                 }).FirstAsync();
         }
+
+        public async Task<HashSet<string>> GetUserPermissionsAsync(string identityId)
+        {
+            var permissions = await context.Set<User>()
+                .Where(x => x.IdentityId == identityId)
+                .SelectMany(x => x.Roles.Select(y => y.Permissions))
+                .FirstAsync();
+
+            return permissions.Select(x => x.Name).ToHashSet();
+        }
     }
 }

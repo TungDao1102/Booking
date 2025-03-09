@@ -1,4 +1,4 @@
-﻿using Booking.Domain.Users;
+﻿using Booking.Domain.Users.Authorizations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

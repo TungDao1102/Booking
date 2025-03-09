@@ -1,4 +1,5 @@
 ﻿using Booking.Domain.Abstractions;
+using Booking.Domain.Users.Authorizations;
 using Booking.Domain.Users.Events;
 
 namespace Booking.Domain.Users

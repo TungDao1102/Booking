@@ -16,7 +16,7 @@ namespace Booking.Infrastructure.Repositories
     };
         public async Task<bool> IsOverlappingAsync(Apartment apartment, DateRange duration, CancellationToken cancellationToken = default)
         {
-            return await _dbSet.AnyAsync(booking =>
+            return await DbContext.Set<Domain.Bookings.Booking>().AnyAsync(booking =>
                    booking.ApartmentId == apartment.Id &&
                    booking.Duration.Start <= duration.End &&
                    booking.Duration.End >= duration.Start &&
