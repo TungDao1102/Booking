@@ -1,10 +1,12 @@
 ﻿using Booking.Application.Abstractions.Authentications;
+using Booking.Application.Abstractions.Caching;
 using Booking.Application.Abstractions.Clocks;
 using Booking.Application.Abstractions.Data;
 using Booking.Application.Abstractions.Email;
 using Booking.Application.Abstractions.Repositories;
 using Booking.Infrastructure.Authentications;
 using Booking.Infrastructure.Authorizations;
+using Booking.Infrastructure.Caching;
 using Booking.Infrastructure.Clocks;
 using Booking.Infrastructure.Converters;
 using Booking.Infrastructure.Data;
@@ -31,6 +33,7 @@ namespace Booking.Infrastructure
             AddPersistence(services, configuration);
             AddAuthentication(services, configuration);
             AddAuthorization(services);
+            AddCaching(services, configuration);
 
             return services;
         }
@@ -86,6 +89,16 @@ namespace Booking.Infrastructure
             services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
             services.AddTransient<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
+        }
+
+        private static void AddCaching(IServiceCollection services, IConfiguration configuration)
+        {
+            string connectionString = configuration.GetConnectionString("Cache") ??
+                                      throw new ArgumentNullException(nameof(configuration));
+
+            services.AddStackExchangeRedisCache(options => options.Configuration = connectionString);
+
+            services.AddSingleton<ICacheService, CacheService>();
         }
     }
 }
