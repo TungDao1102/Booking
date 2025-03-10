@@ -11,6 +11,7 @@ using Booking.Infrastructure.Clocks;
 using Booking.Infrastructure.Converters;
 using Booking.Infrastructure.Data;
 using Booking.Infrastructure.Email;
+using Booking.Infrastructure.HealthChecks;
 using Booking.Infrastructure.Repositories;
 using Dapper;
 using Microsoft.AspNetCore.Authentication;
@@ -34,6 +35,7 @@ namespace Booking.Infrastructure
             AddAuthentication(services, configuration);
             AddAuthorization(services);
             AddCaching(services, configuration);
+            AddHealthChecks(services, configuration);
 
             return services;
         }
@@ -44,6 +46,7 @@ namespace Booking.Infrastructure
 
             services.AddDbContext<AppDbContext>(options =>
             {
+                // EFCore.NamingConventions
                 options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
             });
 
@@ -99,6 +102,15 @@ namespace Booking.Infrastructure
             services.AddStackExchangeRedisCache(options => options.Configuration = connectionString);
 
             services.AddSingleton<ICacheService, CacheService>();
+        }
+
+        private static void AddHealthChecks(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddHealthChecks()
+                .AddCheck<CustomSqlHealthCheck>("custom-sql")
+                .AddNpgSql(configuration.GetConnectionString("Database")!)
+                .AddRedis(configuration.GetConnectionString("Cache")!)
+                .AddUrlGroup(new Uri(configuration["KeyCloak:BaseUrl"]!), HttpMethod.Get, "keycloak");
         }
     }
 }

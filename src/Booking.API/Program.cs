@@ -1,6 +1,8 @@
 using Booking.API.Extensions;
 using Booking.Application;
 using Booking.Infrastructure;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,5 +41,9 @@ app.UseAuthorization();
 
 app.UseCustomExceptionHandler();
 app.MapControllers();
+app.MapHealthChecks("health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.Run();
