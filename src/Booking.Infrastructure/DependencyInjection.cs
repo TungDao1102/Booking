@@ -58,6 +58,7 @@ namespace Booking.Infrastructure
             services.AddScoped<IApartmentRepository, ApartmentRepository>();
             services.AddScoped<IBookingRepository, BookingRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IReviewRepository, ReviewRepository>();
             services.AddScoped<IUnitOfWork>(config => config.GetRequiredService<AppDbContext>());
 
             services.AddSingleton<ISqlConnectionFactory>(_ => new SqlConnectionFactory(connectionString));
