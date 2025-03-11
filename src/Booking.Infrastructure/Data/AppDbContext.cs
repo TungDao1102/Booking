@@ -1,13 +1,19 @@
-﻿using Booking.Application.Abstractions.Repositories;
+﻿using Booking.Application.Abstractions.Clocks;
+using Booking.Application.Abstractions.Repositories;
 using Booking.Application.Exceptions;
 using Booking.Domain.Abstractions;
-using MediatR;
+using Booking.Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Booking.Infrastructure.Data
 {
-    public sealed class AppDbContext(DbContextOptions options, IPublisher publisher) : DbContext(options), IUnitOfWork
+    public sealed class AppDbContext(DbContextOptions options, IDateTimeProvider timeProvider) : DbContext(options), IUnitOfWork
     {
+        private static readonly JsonSerializerSettings JsonSerializerSettings = new()
+        {
+            TypeNameHandling = TypeNameHandling.All
+        };
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
@@ -18,7 +24,7 @@ namespace Booking.Infrastructure.Data
         {
             try
             {
-                await PublishEventsAsync();
+                await AddDomainEventsAsOutboxMessagesAsync();
 
                 int result = await base.SaveChangesAsync(cancellationToken);
 
@@ -30,21 +36,24 @@ namespace Booking.Infrastructure.Data
             }
         }
 
-        private async Task PublishEventsAsync()
+        private async Task AddDomainEventsAsOutboxMessagesAsync()
         {
-            var domainEvents = ChangeTracker.Entries<BaseEntity>()
+            var outboxMessages = ChangeTracker.Entries<BaseEntity>()
                     .Select(x => x.Entity)
                     .SelectMany(x =>
                     {
                         var domainEvent = x.GetDomainEvents();
                         x.ClearDomainEvents();
                         return domainEvent;
-                    }).ToList();
+                    })
+                    .Select(domainEvent => new OutboxMessage(
+                        Guid.NewGuid(),
+                        timeProvider.UtcNow,
+                        domainEvent.GetType().Name,
+                        JsonConvert.SerializeObject(domainEvent, JsonSerializerSettings)))
+                    .ToList();
 
-            foreach (var domainEvent in domainEvents)
-            {
-                await publisher.Publish(domainEvent);
-            }
+            await AddRangeAsync(outboxMessages);
         }
     }
 }

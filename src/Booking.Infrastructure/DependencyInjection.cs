@@ -13,6 +13,7 @@ using Booking.Infrastructure.Converters;
 using Booking.Infrastructure.Data;
 using Booking.Infrastructure.Email;
 using Booking.Infrastructure.HealthChecks;
+using Booking.Infrastructure.Outbox;
 using Booking.Infrastructure.Repositories;
 using Dapper;
 using Microsoft.AspNetCore.Authentication;
@@ -22,6 +23,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Quartz;
 
 namespace Booking.Infrastructure
 {
@@ -38,6 +40,7 @@ namespace Booking.Infrastructure
             AddCaching(services, configuration);
             AddHealthChecks(services, configuration);
             AddApiVersioning(services);
+            AddBackgroundJobs(services, configuration);
 
             return services;
         }
@@ -131,6 +134,14 @@ namespace Booking.Infrastructure
                     options.GroupNameFormat = "'v'V";
                     options.SubstituteApiVersionInUrl = true;
                 });
+        }
+
+        private static void AddBackgroundJobs(IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<OutboxOptions>(configuration.GetSection("Outbox"));
+            services.AddQuartz();
+            services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
+            services.ConfigureOptions<ProcessOutboxMessagesJobSetup>();
         }
     }
 }
