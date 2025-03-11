@@ -1,4 +1,6 @@
+using Asp.Versioning.ApiExplorer;
 using Booking.API.Extensions;
+using Booking.API.OpenAPI;
 using Booking.Application;
 using Booking.Infrastructure;
 using HealthChecks.UI.Client;
@@ -20,6 +22,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.ConfigureOptions<ConfigSwaggerOptions>();
 
 var app = builder.Build();
 
@@ -27,7 +30,15 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        foreach (ApiVersionDescription description in app.DescribeApiVersions())
+        {
+            string url = $"/swagger/{description.GroupName}/swagger.json";
+            string name = description.GroupName.ToUpperInvariant();
+            options.SwaggerEndpoint(url, name);
+        }
+    });
     app.ApplyMigrations();
     //  app.SeedData();
 }

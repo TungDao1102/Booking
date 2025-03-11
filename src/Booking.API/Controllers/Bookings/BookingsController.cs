@@ -1,4 +1,6 @@
-﻿using Booking.Application.Bookings.GetBooking;
+﻿using Asp.Versioning;
+using Booking.API.Commons;
+using Booking.Application.Bookings.GetBooking;
 using Booking.Application.Bookings.ReserveBooking;
 using Booking.Domain.Commons;
 using MediatR;
@@ -7,7 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Booking.API.Controllers.Bookings
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [ApiVersion(Versions.V1)]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class BookingsController(ISender sender) : ControllerBase
     {
         [HttpGet("{id}")]

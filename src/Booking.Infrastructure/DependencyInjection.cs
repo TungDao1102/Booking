@@ -1,4 +1,5 @@
-﻿using Booking.Application.Abstractions.Authentications;
+﻿using Asp.Versioning;
+using Booking.Application.Abstractions.Authentications;
 using Booking.Application.Abstractions.Caching;
 using Booking.Application.Abstractions.Clocks;
 using Booking.Application.Abstractions.Data;
@@ -36,6 +37,7 @@ namespace Booking.Infrastructure
             AddAuthorization(services);
             AddCaching(services, configuration);
             AddHealthChecks(services, configuration);
+            AddApiVersioning(services);
 
             return services;
         }
@@ -111,6 +113,24 @@ namespace Booking.Infrastructure
                 .AddNpgSql(configuration.GetConnectionString("Database")!)
                 .AddRedis(configuration.GetConnectionString("Cache")!)
                 .AddUrlGroup(new Uri(configuration["KeyCloak:BaseUrl"]!), HttpMethod.Get, "keycloak");
+        }
+
+        private static void AddApiVersioning(IServiceCollection services)
+        {
+            services
+                .AddApiVersioning(options =>
+                {
+                    options.DefaultApiVersion = new ApiVersion(1);
+                    options.ReportApiVersions = true;
+                    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+                })
+                .AddMvc()
+                .AddApiExplorer(options =>
+                {
+                    // for swagger
+                    options.GroupNameFormat = "'v'V";
+                    options.SubstituteApiVersionInUrl = true;
+                });
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Booking.Application.Apartments.SearchApartments;
+﻿using Asp.Versioning;
+using Booking.API.Commons;
+using Booking.Application.Apartments.SearchApartments;
 using Booking.Domain.Commons;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Booking.API.Controllers.Apartments
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [ApiVersion(Versions.V1)]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class ApartmentsController(ISender sender) : ControllerBase
     {
         [HttpGet]

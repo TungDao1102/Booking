@@ -1,6 +1,10 @@
-﻿using Booking.Application.Users.LoginUser;
+﻿using Asp.Versioning;
+using Booking.API.Commons;
+using Booking.Application.Users.GetLoggedInUser;
+using Booking.Application.Users.LoginUser;
 using Booking.Application.Users.RegisterUser;
 using Booking.Domain.Commons;
+using Booking.Infrastructure.Authorizations;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +12,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace Booking.API.Controllers.Users
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [ApiVersion(Versions.V1, Deprecated = true)]
+    [ApiVersion(Versions.V2)]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class UsersController(ISender sender) : ControllerBase
     {
         [AllowAnonymous]
@@ -36,15 +42,28 @@ namespace Booking.API.Controllers.Users
             return result.IsFailure ? Unauthorized(result.Error) : Ok(result.Value);
         }
 
-        //[HttpGet("me")]
-        //[HasPermission(Permissions.UserRead)]
-        //public async Task<IActionResult> GetLoggedInUser(CancellationToken cancellationToken)
-        //{
-        //    var query = new GetLoggedInUserQuery();
+        [HttpGet("me")]
+        [HasPermission(Permissions.UserRead)]
+        [MapToApiVersion(Versions.V1)]
+        public async Task<IActionResult> GetLoggedInUserV1(CancellationToken cancellationToken)
+        {
+            var query = new GetLoggedInUserQuery();
 
-        //    Result<UserResponse> result = await sender.Send(query, cancellationToken);
+            Result<UserResponse> result = await sender.Send(query, cancellationToken);
 
-        //    return Ok(result.Value);
-        //}
+            return Ok(result.Value);
+        }
+
+        [HttpGet("me")]
+        [HasPermission(Permissions.UserRead)]
+        [MapToApiVersion(Versions.V2)]
+        public async Task<IActionResult> GetLoggedInUserV2(CancellationToken cancellationToken)
+        {
+            var query = new GetLoggedInUserQuery();
+
+            Result<UserResponse> result = await sender.Send(query, cancellationToken);
+
+            return Ok(result.Value);
+        }
     }
 }
