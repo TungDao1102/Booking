@@ -1,4 +1,7 @@
+using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
+using Asp.Versioning.Builder;
+using Booking.API.Endpoints;
 using Booking.API.Extensions;
 using Booking.API.OpenAPI;
 using Booking.Application;
@@ -52,6 +55,21 @@ app.UseAuthorization();
 
 app.UseCustomExceptionHandler();
 app.MapControllers();
+
+// using method 1
+app.MapBookingEndpoint();
+
+// method 2: auto map api versioning for endpoint
+ApiVersionSet apiVersionSet = app.NewApiVersionSet()
+               .HasApiVersion(new ApiVersion(1))
+               .HasApiVersion(new ApiVersion(2))
+               .ReportApiVersions()
+               .Build();
+
+var routeGroupBuilder = app.MapGroup("api/v{version:apiVersion}").WithApiVersionSet(apiVersionSet);
+routeGroupBuilder.MapBookingEndpoint();
+// end
+
 app.MapHealthChecks("health", new HealthCheckOptions
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
