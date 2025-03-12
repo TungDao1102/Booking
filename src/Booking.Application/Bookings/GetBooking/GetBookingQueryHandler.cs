@@ -27,7 +27,7 @@ namespace Booking.Application.Bookings.GetBooking
                 total_price_currency AS TotalPriceCurrency,
                 duration_start AS DurationStart,
                 duration_end AS DurationEnd,
-                created_on_utc AS CreatedOnUtc
+                created_on AS CreatedOn
             FROM bookings
             WHERE id = @BookingId
             """;
