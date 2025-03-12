@@ -9,7 +9,7 @@ using Booking.Domain.Users;
 
 namespace Booking.Application.Bookings.ReserveBooking
 {
-    internal sealed class ReserveBookingCommandHandler(
+    public sealed class ReserveBookingCommandHandler(
         IUserRepository userRepository,
         IApartmentRepository apartmentRepository,
         IBookingRepository bookingRepository,
